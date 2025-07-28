@@ -1,4 +1,5 @@
-import {ScratchStorage} from 'scratch-storage';
+import {ScratchStorage} from '../scratch-storage/ScratchStorage'
+//import {ScratchStorage} from 'scratch-storage';
 
 import defaultProject from './default-project';
 
@@ -40,6 +41,7 @@ class Storage extends ScratchStorage {
     }
     getProjectGetConfig (projectAsset) {
         const path = `${this.projectHost}/${projectAsset.assetId}`;
+        console.log('Getting project from', path);
         const qs = this.projectToken ? `?token=${this.projectToken}` : '';
         return path + qs;
     }

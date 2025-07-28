@@ -43,6 +43,9 @@ export default appTarget => {
     const backpackHostMatches = window.location.href.match(/[?&]backpack_host=([^&]*)&?/);
     const backpackHost = backpackHostMatches ? backpackHostMatches[1] : null;
 
+    const gameFullScreenParam = window.location.href.match(/[?&]fullscreen=([^&]*)&?/)
+    const isGameFullScreen = gameFullScreenParam ? gameFullScreenParam[1] == "true" : false;
+
     const scratchDesktopMatches = window.location.href.match(/[?&]isScratchDesktop=([^&]+)/);
     let simulateScratchDesktop;
     if (scratchDesktopMatches) {
@@ -72,6 +75,7 @@ export default appTarget => {
                 onTelemetryModalCancel={handleTelemetryModalCancel}
                 onTelemetryModalOptIn={handleTelemetryModalOptIn}
                 onTelemetryModalOptOut={handleTelemetryModalOptOut}
+                isFullScreen={isGameFullScreen}
             /> :
             <WrappedGui
                 canEditTitle
@@ -80,6 +84,7 @@ export default appTarget => {
                 backpackHost={backpackHost}
                 canSave={false}
                 onClickLogo={onClickLogo}
+                isFullScreen={isGameFullScreen}
             />,
         appTarget);
 };
