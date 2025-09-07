@@ -7,6 +7,15 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const ScratchWebpackConfigBuilder = require('scratch-webpack-configuration');
 
+const fs = require('fs');
+let settings = require('./default_settings.json')
+if (fs.existsSync('./settings.json')) {
+    settings = {
+        ...settings,
+        ...require('./settings.json')
+    };
+}
+
 // const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
 const commonHtmlWebpackPluginOptions = {
@@ -53,7 +62,9 @@ const baseConfig = new ScratchWebpackConfigBuilder(
         'process.env.DEBUG': Boolean(process.env.DEBUG),
         'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
         'process.env.GTM_ENV_AUTH': `"${process.env.GTM_ENV_AUTH || ''}"`,
-        'process.env.GTM_ID': process.env.GTM_ID ? `"${process.env.GTM_ID}"` : null
+        'process.env.GTM_ID': process.env.GTM_ID ? `"${process.env.GTM_ID}"` : null,
+        'INSERT_PROJECT_HOST' : JSON.stringify(settings.project_host),
+        'INSERT_ASSET_HOST' : JSON.stringify(settings.asset_host)
     }))
     .addPlugin(new CopyWebpackPlugin({
         patterns: [

@@ -1,5 +1,50 @@
 # scratch-gui
 
+## Modified version of scratch-gui
+
+This is a modified version of the [scratch-gui repository](https://github.com/scratchfoundation/scratch-gui) that allowes to host scratch projects on an other server than the official scratch project server https://projects.scratch.mit.edu. It also implements the possibility to implement the fullscreen mode by default by setting the `fullscreen=true` option in the project url.
+
+### Hosting this project on your server
+
+In the root directory of this repository create an `settings.json`file with the following content:
+
+```
+{
+    "project_host": "https://your.server.example.com/projects",
+    "asset_host": "https://your.server.example.com/"
+}
+```
+
+In your server create a folder `/var/www/scratch`.
+In this folder create `assets` directory that contains all assets of the scratch projects (png files, svg files, ...).
+In the same folder create also a `projects` directory that contains all the scratch json files named like numbers.
+
+Go back in the root directory of this repository and execute `npm run build`.
+Copy the content of the `build`directory of this repository into the `/var/www/scratch` folder on the server.
+
+If you are using nginx use the following config:
+
+```
+server{
+        listen 443 ssl;
+        listen [::]:443 ssl;
+
+        server_name your.server.example.com;
+        ssl_certificate /etc/letsencrypt/live/your.server.example.com/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/your.server.example.com/privkey.pem;
+
+        rewrite ^/editor/[0-9]+ /editor/index.html;
+        rewrite ^/internalapi/asset/(.*)/get/$ /assets/$1;
+
+        location / {
+                root /var/www/scratch/;
+        }
+}
+```
+
+The scratch project 1 can now be accessed by calling `https://your.server.example.com/#1`.
+It can be opened in fullscreen mode by calling `https://your.server.example.com/#1?fullscreen=true`
+
 ## **⚠️ NOTICE: Repository Migration to Mono-Repo ⚠️**
 
 The Scratch Team has migrated the `scratch-gui` module into a new mono-repo,
