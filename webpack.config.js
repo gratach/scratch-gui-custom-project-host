@@ -16,6 +16,24 @@ if (fs.existsSync('./settings.json')) {
     };
 }
 
+class EnsureDataDirsPlugin {
+    apply(compiler) {
+        compiler.hooks.beforeRun.tap('EnsureDataDirsPlugin', () => {
+            const dirs = [
+                path.resolve(__dirname, 'data'),
+                path.resolve(__dirname, 'data/projects'),
+                path.resolve(__dirname, 'data/assets')
+            ];
+
+            dirs.forEach(dir => {
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir, { recursive: true });
+                }
+            });
+        });
+    }
+}
+
 // const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
 const commonHtmlWebpackPluginOptions = {
@@ -89,7 +107,8 @@ const baseConfig = new ScratchWebpackConfigBuilder(
                 noErrorOnMissing: true
             }
         ]
-    }));
+    }))
+    .addPlugin(new EnsureDataDirsPlugin());
 
 if (!process.env.CI) {
     baseConfig.addPlugin(new webpack.ProgressPlugin());

@@ -6,21 +6,20 @@ This is a modified version of the [scratch-gui repository](https://github.com/sc
 
 ### Hosting this project on your server
 
-In the root directory of this repository create an `settings.json`file with the following content:
+In the root directory of this repository create an `settings.json` file with the following content:
 
 ```
 {
     "project_host": "https://your.server.example.com/projects",
-    "asset_host": "https://your.server.example.com/"
+    "asset_host": "https://your.server.example.com/assets"
 }
 ```
 
-In your server create a folder `/var/www/scratch`.
-In this folder create `assets` directory that contains all assets of the scratch projects (png files, svg files, ...).
-In the same folder create also a `projects` directory that contains all the scratch json files named like numbers.
+In your server create a folder `/var/www/scratch-data/assets` that contains all assets of the scratch projects (png files, svg files, ...).
+Create a second folder `/var/www/scratch-data/projects` on the server that contains all the scratch json files named like numbers.
 
-Go back in the root directory of this repository and execute `npm run build`.
-Copy the content of the `build`directory of this repository into the `/var/www/scratch` folder on the server.
+On your local machine go back in the root directory of this repository and execute `npm run build`.
+Copy the content of the `build` directory of this repository into a folder `/var/www/scratch` that you create on the server.
 
 If you are using nginx use the following config:
 
@@ -33,17 +32,44 @@ server{
         ssl_certificate /etc/letsencrypt/live/your.server.example.com/fullchain.pem;
         ssl_certificate_key /etc/letsencrypt/live/your.server.example.com/privkey.pem;
 
-        rewrite ^/editor/[0-9]+ /editor/index.html;
-        rewrite ^/internalapi/asset/(.*)/get/$ /assets/$1;
-
         location / {
-                root /var/www/scratch/;
+            root /var/www/scratch/;
+        }
+
+        location /assets/ {
+            root /var/www/scratch-data/;
+        }
+
+        location /projects/ {
+            root /var/www/scratch-data/;
         }
 }
 ```
 
 The scratch project 1 can now be accessed by calling `https://your.server.example.com/#1`.
 It can be opened in fullscreen mode by calling `https://your.server.example.com/#1?fullscreen=true`
+
+### Testing the project locally
+
+To test the project locally enter the followin in the `settings.json` file:
+
+```
+{
+    "project_host": "http://localhost:8123/projects",
+    "asset_host": "http://localhost:8123/assets",
+    "serve_build_port": 8123
+}
+```
+
+Go to the root of this directory and place all the projects in the `data/projects` folder and all the assets in the `data/assets`folder.
+
+Build the project with `npm run build`.
+
+Start the server with `python serve_build.py`.
+
+In the browser open `http://localhost:8123`.
+The scratch project 1 can now be accessed by calling `http://localhost:8123/#1`.
+It can be opened in fullscreen mode by calling `http://localhost:8123/#1?fullscreen=true`
 
 ## **⚠️ NOTICE: Repository Migration to Mono-Repo ⚠️**
 

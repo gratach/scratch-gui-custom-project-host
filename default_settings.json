@@ -1,4 +1,5 @@
 {
-    "project_host": "https://projects.scratch.mit.edu",
-    "asset_host": "https://assets.scratch.mit.edu"
+    "project_host": "http://localhost:8123/projects",
+    "asset_host": "http://localhost:8123/assets",
+    "serve_build_port": 8123
 }
