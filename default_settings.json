@@ -1,5 +1,7 @@
 {
     "project_host": "http://localhost:8123/projects",
     "asset_host": "http://localhost:8123/assets",
-    "serve_build_port": 8123
+    "serve_build_port": 8123,
+    "projects_root": "./data/projects",
+    "assets_root": "./data/assets"
 }

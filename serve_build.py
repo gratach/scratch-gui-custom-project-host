@@ -69,6 +69,8 @@ class BuildRequestHandler(SimpleHTTPRequestHandler):
         self.project_prefix = kwargs.pop("project_prefix")
         self.asset_prefix = kwargs.pop("asset_prefix")
         self.script_dir = kwargs.pop("script_dir")
+        self.assets_root = kwargs.pop("assets_root")
+        self.projects_root = kwargs.pop("projects_root")
 
         super().__init__(*args, **kwargs)
 
@@ -84,20 +86,32 @@ class BuildRequestHandler(SimpleHTTPRequestHandler):
         # Project redirect
         if clean_path.startswith(self.project_prefix + "/"):
             rest = clean_path[len(self.project_prefix) + 1 :]
+            if self.projects_root is None:
+                return os.path.join(
+                    self.script_dir,
+                    "data",
+                    "projects",
+                    rest
+                )
             return os.path.join(
                 self.script_dir,
-                "data",
-                "projects",
+                self.projects_root,
                 rest
             )
 
         # Asset redirect
         if clean_path.startswith(self.asset_prefix + "/"):
             rest = clean_path[len(self.asset_prefix) + 1 :]
+            if self.assets_root is None:
+                return os.path.join(
+                    self.script_dir,
+                    "data",
+                    "assets",
+                    rest
+                )
             return os.path.join(
                 self.script_dir,
-                "data",
-                "assets",
+                self.assets_root,
                 rest
             )
 
@@ -143,6 +157,8 @@ def main():
         serve_build_port = int(config["serve_build_port"])
         project_host = config["project_host"]
         asset_host = config["asset_host"]
+        projects_root = config.get("projects_root")
+        assets_root = config.get("assets_root")
     except KeyError as e:
         print(f"Error: Missing config value: {e}")
         sys.exit(1)
@@ -180,6 +196,8 @@ def main():
             project_prefix=project_prefix,
             asset_prefix=asset_prefix,
             script_dir=script_dir,
+            assets_root = assets_root,
+            projects_root = projects_root,
             **kwargs
         )
 
